@@ -6,6 +6,9 @@ import pandas as pd
 # nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+import nltk
+nltk.download('wordnet')
+nltk.download('punkt')
 # scikit-learn
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -26,6 +29,7 @@ def load_data(database_filepath):
     table_name = engine.table_names()[0]
     df = pd.read_sql_table(table_name, engine)
     X = df.message
+    #Y = df[['military']]
     Y = df.drop(columns=['id','message','original','genre'])
     category_names = Y.columns
 
@@ -57,19 +61,18 @@ def build_model():
                          ('clf',MultiOutputClassifier(RandomForestClassifier(verbose = 1,n_jobs=-1,random_state=42)))
                          ])
     # specify parameters for grid search
-    parameters = {'clf__estimator__max_features' : [None, 'sqrt'],
-            	  'clf__estimator__n_estimators': [100, 500]
-             		}
+    parameters = {'clf__estimator__max_features' : [None, 'sqrt']}
     # create grid search object
-    pipeline_cv = GridSearchCV(pipeline, parameters)                        
+    pipeline_cv = GridSearchCV(pipeline, parameters,cv=3)                        
 
     return pipeline_cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    Y_pred = model.predict(X_test)
     for idx, col in enumerate(category_names):
         print('For category {}:'.format(col))
-        print(classification_report(y_test[col], y_pred[:,idx]))
+        print(classification_report(Y_test[col], Y_pred[:,idx]))
     pass
 
 
