@@ -75,7 +75,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 def save_model(model, model_filepath):
     outfile = open(model_filepath,'wb')
-    pickle.dump(model, model_filepath)
+    pickle.dump(model, outfile)
     outfile.close()
 
 
