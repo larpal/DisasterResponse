@@ -57,12 +57,11 @@ def build_model():
 
     pipeline = Pipeline([('vect', CountVectorizer(tokenizer = tokenize)),
                          ('tfidf', TfidfTransformer()),
-                         ('clf',MultiOutputClassifier(RandomForestClassifier(n_jobs=-1,random_state=42)))
+                         ('clf',MultiOutputClassifier(RandomForestClassifier(verbose = 1,n_jobs=-1,random_state=42)))
                          ])
     # specify parameters for grid search
-    parameters = {'clf__estimator__max_features' : [None, 'sqrt', 'log2'],
-       		      'clf__estimator__min_samples_leaf': [1, 2, 5],
-            	  'clf__estimator__n_estimators': [100, 200, 500]
+    parameters = {'clf__estimator__max_features' : [None, 'sqrt'],
+            	  'clf__estimator__n_estimators': [100, 500]
              		}
     # create grid search object
     pipeline_cv = GridSearchCV(pipeline, parameters)                        
