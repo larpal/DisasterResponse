@@ -6,6 +6,9 @@ import pandas as pd
 # nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+import nltk
+nltk.download('wordnet')
+nltk.download('punkt')
 # scikit-learn
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
