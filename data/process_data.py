@@ -34,6 +34,11 @@ def clean_data(df):
     # drop duplicates
     df = df.drop_duplicates()
     
+    # drop columns with only one distinct value
+    for col in df:
+        if df[col].nunique() == 1:
+            df.drop(columns=col, inplace=True)
+            
     return df
 
 

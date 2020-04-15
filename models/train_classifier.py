@@ -31,11 +31,7 @@ def load_data(database_filepath):
     table_name = engine.table_names()[0]
     df = pd.read_sql_table(table_name, engine)
     X = df.message
-    # child_alone category has only one value in the training data
     Y = df.drop(columns=['id','message','original','genre'])
-    # hack to include the child_alone column. This has only 0s in the training data
-    # so we cannot learn to predict it properly.
-    Y['child_alone'][0] = 1
     category_names = Y.columns
 
 
@@ -94,7 +90,7 @@ def main():
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2,random_state=42)
         
         print('Building model...')
         model = build_model()
