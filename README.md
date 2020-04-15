@@ -106,22 +106,21 @@ changes in the pipelines.
 
 ## Libraries and Dependencies
 The notebook uses the following Python libraries:
+* [flask](https://flask.palletsprojects.com/en/1.1.x/)
+* [json](https://docs.python.org/3/library/json.html)
+* [nltk](https://www.nltk.org)
 * [numpy](https://numpy.org)
+* [os](https://docs.python.org/3/library/os.html)
 * [pandas](https://pandas.pydata.org)
-* sqlalchemy
-* scikit-laern
-* nltk
-* sys
-* os
-* pickle
-* json
-* plotly
-* flask
-
-
+* [pickle](https://docs.python.org/3/library/pickle.html)
+* [plotly](https://plotly.com/graphing-libraries/)
+* [scikit-laern](https://scikit-learn.org/stable/)
+* [sqlalchemy](https://www.sqlalchemy.org)
+* [sys](https://docs.python.org/3/library/sys.html)
 
 ## Licensing, Authors, and Acknowledgements
 The data set was provided by [figure eight](https://www.figure-eight.com) for the 
-Udacity Data Science Nano Degree. A similar version of the data set
-(which is already preprocessed) is available 
-[here](https://www.figure-eight.com/dataset/combined-disaster-response-data/).
+Udacity [Data Science Nanodegree](https://www.udacity.com/course/data-scientist-nanodegree--nd025).
+A similar version of the data set (which is already preprocessed) is available 
+[here](https://www.figure-eight.com/dataset/combined-disaster-response-data/). Parts of
+the code used here was provided by Udacity.
