@@ -1,6 +1,7 @@
 import json
 import plotly
 import pandas as pd
+import numpy as np
 
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -26,11 +27,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
-
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table(engine.table_names()[0], engine)
+df.drop(columns='child_alone',inplace = True)
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -43,6 +44,15 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Heatmap
+    Y = df.drop(columns=['id','message','original','genre'])
+    Y_corr = Y.corr
+    
+    # Occurences of Categories
+    df_cat = pd.DataFrame(Y.sum().sort_values(ascending=False), columns=['count'])
+    cat_names = list(df_cat.index)
+    cat_counts = df_cat['count']
+    print(cat_names)
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -60,8 +70,46 @@ def index():
                     'title': "Count"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "Category"
                 }
+            }
+        },
+        # occurrences in training data
+        {
+            'data': [
+                Bar(
+                    x = cat_names,
+                    y = cat_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                #'xaxis': {
+                #    'title': "Category"
+                #}
+            }
+        },
+        # next plot
+        {
+            'data': [
+    {
+      "type": "heatmap",
+      "x": list(Y.columns),
+      "y": list(Y.columns),
+      "z": np.array(Y.corr())
+    }
+  ],
+
+            'layout': {
+                'title': 'Correlation Between Categories',
+            	'height': 700,
+            	'margin': {'l': 150,
+            			   'r': 100,
+            			   't':150},
             }
         }
     ]
