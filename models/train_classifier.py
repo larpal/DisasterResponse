@@ -23,9 +23,11 @@ import pickle
 
 def load_data(database_filepath):
     path = os.path.abspath(os.getcwd())
-    print(path+database_filepath[7:])
-    tmp_str = 'sqlite:///{}'.format(path + database_filepath[7:])
+    print(path)
+    print(path+database_filepath)
+    tmp_str = 'sqlite:///{}'.format(path +'/'+ database_filepath)
     engine = create_engine(tmp_str)
+    print(engine)
     table_name = engine.table_names()[0]
     df = pd.read_sql_table(table_name, engine)
     X = df.message
@@ -58,14 +60,14 @@ def build_model():
 
     pipeline = Pipeline([('vect', CountVectorizer(tokenizer = tokenize)),
                          ('tfidf', TfidfTransformer()),
-                         ('clf',MultiOutputClassifier(LogisticRegression(verbose=1,random_state=42)))
+                         ('clf',MultiOutputClassifier(LogisticRegression(solver='sag',random_state=42)))
                          ])
     # specify parameters for grid search
-    parameters = {'vect__ngram_range' : [(1,1), (1,2),(1,3)],
+    parameters = {'vect__ngram_range' : [(1,1), (1,2)],
                  'tfidf__use_idf': [True, False]
                  }
     # create grid search object
-    pipeline_cv = GridSearchCV(pipeline, parameters,cv=3)                        
+    pipeline_cv = GridSearchCV(pipeline, parameters,cv=3, verbose = 1)                        
 
     return pipeline_cv
 
