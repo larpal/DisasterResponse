@@ -16,7 +16,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 # pickle 
 import pickle
@@ -29,8 +29,8 @@ def load_data(database_filepath):
     table_name = engine.table_names()[0]
     df = pd.read_sql_table(table_name, engine)
     X = df.message
-    #Y = df[['military']]
-    Y = df.drop(columns=['id','message','original','genre'])
+    # child_alone category has only one value in the training data
+    Y = df.drop(columns=['id','message','original','genre','child_alone'])
     category_names = Y.columns
 
 
@@ -58,10 +58,12 @@ def build_model():
 
     pipeline = Pipeline([('vect', CountVectorizer(tokenizer = tokenize)),
                          ('tfidf', TfidfTransformer()),
-                         ('clf',MultiOutputClassifier(RandomForestClassifier(verbose = 1,n_jobs=-1,random_state=42)))
+                         ('clf',MultiOutputClassifier(LogisticRegression(verbose=1,random_state=42)))
                          ])
     # specify parameters for grid search
-    parameters = {'clf__estimator__max_features' : [None, 'sqrt']}
+    parameters = {'vect__ngram_range' : [(1,1), (1,2),(1,3)],
+                 'tfidf__use_idf': [True, False]
+                 }
     # create grid search object
     pipeline_cv = GridSearchCV(pipeline, parameters,cv=3)                        
 
