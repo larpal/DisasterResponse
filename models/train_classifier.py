@@ -22,23 +22,42 @@ from sklearn.pipeline import Pipeline
 import pickle
 
 def load_data(database_filepath):
+    """Loads data from an SQL databases and splits it into
+    	messages, labels, and category names
+
+        Args: 
+            database_filepath (str): file path database
+
+        Returns: messages, labels, category names 
+	"""
+	# get path of current folder
     path = os.path.abspath(os.getcwd())
-    print(path)
-    print(path+database_filepath)
+    # get total path to database
     tmp_str = 'sqlite:///{}'.format(path +'/'+ database_filepath)
+	# create engine and extract table name
     engine = create_engine(tmp_str)
-    print(engine)
     table_name = engine.table_names()[0]
     df = pd.read_sql_table(table_name, engine)
+    # extract messages, labels, and category names
     X = df.message
     Y = df.drop(columns=['id','message','original','genre'])
     category_names = Y.columns
-
 
     return X,Y, category_names
 
 
 def tokenize(text):
+    """NLP with four steps:
+    	- tokenizes
+    	- change to lower case
+    	- strip whitespaces
+    	- lemmatize
+
+        Args: 
+            text (str)
+
+        Returns: tokens (list)
+	"""
     # tokenize text
     tokens = word_tokenize(text)
     
@@ -56,7 +75,18 @@ def tokenize(text):
     return clean_tokens
 
 def build_model():
+    """Build a machine learning classifier for multiple binary classication problems.
+    	The pipeline consists of
+    		- scikit-learn CountVectorizer using above defined tokenize function
+    		- scikit-learn TfidfTransformer
+    		- MultiOutput Logistic Regression classifier
+		The model uses GridsearchCV to tune the parameters ngram_range of the 
+		CountVectorizer and use_idf of the TfidfTransformer.
 
+        Args: None
+
+        Returns: pipeline
+	"""
     pipeline = Pipeline([('vect', CountVectorizer(tokenizer = tokenize)),
                          ('tfidf', TfidfTransformer()),
                          ('clf',MultiOutputClassifier(LogisticRegression(solver='sag',random_state=42,max_iter = 500)))
@@ -72,6 +102,18 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+	"""Scores a model using scklearn.metrics.classification_report. Reports
+		are printed for each category.
+		
+		Args: 
+			model: sklearn model
+			X_test (pd.DataFrame): test data
+			Y_test (pd.DataFrame): test labels
+			category_names (list): category names
+			
+		Returns: 
+			None
+	"""
     Y_pred = model.predict(X_test)
     for idx, col in enumerate(category_names):
         print('For category {}:'.format(col))
@@ -80,12 +122,23 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """"Saves model using pickle.
+    
+        Args:
+        	model: model to be saved
+        	model_filepath: file path
+        
+        Returns: 
+        	None
+    
+    """"
     outfile = open(model_filepath,'wb')
     pickle.dump(model, outfile)
     outfile.close()
 
 
 def main():
+    """ Runs the ML pipeline """
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))

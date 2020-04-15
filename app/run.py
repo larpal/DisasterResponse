@@ -29,7 +29,6 @@ def tokenize(text):
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table(engine.table_names()[0], engine)
-#df.drop(columns='child_alone',inplace = True)
 # load model
 model = joblib.load("../models/classifier.pkl")
 
@@ -44,14 +43,15 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
-    # Heatmap
+    # Compute correlation matrix
     Y = df.drop(columns=['id','message','original','genre'])
     Y_corr = Y.corr
     
-    # Occurences of Categories
+    # Compute occurrences of categories
     df_cat = pd.DataFrame(Y.sum().sort_values(ascending=False), columns=['count'])
     cat_names = list(df_cat.index)
     cat_counts = df_cat['count']
+    
     print(cat_names)
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -74,7 +74,7 @@ def index():
                 }
             }
         },
-        # occurrences in training data
+        # New visualization: occurrences of categories in training data
         {
             'data': [
                 Bar(
@@ -93,7 +93,7 @@ def index():
                 #}
             }
         },
-        # next plot
+    # New visualization: correlation heatmap
         {
             'data': [
     {

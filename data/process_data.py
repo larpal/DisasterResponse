@@ -3,7 +3,15 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
-    
+    """Loads the messages and categories data sets and merges them based
+    	on the id.
+
+        Args: 
+            messages_filepath (str): file path of messages csv file
+            categories_filepath (str): file path of categories csv file
+
+        Returns: data frame
+	"""
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = pd.merge(messages,categories,on='id')
@@ -12,6 +20,18 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    """Cleans the data frame for further use. The output dataframe has
+    	one column containing the english text message and one column
+    	for each category containing binary labels.
+    	NOTE: 
+    		- duplicate rows are removed
+    		- columns that have only one distinct value are removed.
+
+        Args: 
+            df (pd.DataFrame): output of load_data()
+
+        Returns: cleaned data frame
+	"""
 
     # create a dataframe of the 36 individual category columns
     categories = df.categories.str.split(';',expand=True)
@@ -38,17 +58,27 @@ def clean_data(df):
     for col in df:
         if df[col].nunique() == 1:
             df.drop(columns=col, inplace=True)
+            print('Removed column {} since it has only 1 distinct value'.format{col})
             
     return df
 
 
 def save_data(df, database_filename):
+    """Exports the input data frame as an SQL data base.
+
+        Args: 
+            df (pd.DataFrame): data frame to be exported
+            database_filename (str): file path for data base
+
+        Returns: None
+	"""
     tmp_str = 'sqlite:///{}'.format(database_filename)
     engine = create_engine(tmp_str)
     df.to_sql(database_filename, engine, index=False)
 
 
 def main():
+    """ Runs the ETL pipeline """
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
