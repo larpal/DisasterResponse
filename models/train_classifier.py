@@ -102,18 +102,18 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-	"""Scores a model using scklearn.metrics.classification_report. Reports
-		are printed for each category.
+    """ Scores a model using scklearn.metrics.classification_report. Reports
+        are printed for each category.
 		
-		Args: 
-			model: sklearn model
-			X_test (pd.DataFrame): test data
-			Y_test (pd.DataFrame): test labels
-			category_names (list): category names
+        Args: 
+            model: sklearn model
+            X_test (pd.DataFrame): test data
+            Y_test (pd.DataFrame): test labels
+            category_names (list): category names
 			
-		Returns: 
-			None
-	"""
+        Returns: 
+            None
+    """
     Y_pred = model.predict(X_test)
     for idx, col in enumerate(category_names):
         print('For category {}:'.format(col))
@@ -122,7 +122,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    """"Saves model using pickle.
+    """ Saves model using pickle.
     
         Args:
         	model: model to be saved
@@ -130,8 +130,7 @@ def save_model(model, model_filepath):
         
         Returns: 
         	None
-    
-    """"
+    """
     outfile = open(model_filepath,'wb')
     pickle.dump(model, outfile)
     outfile.close()

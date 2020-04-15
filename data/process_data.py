@@ -58,7 +58,7 @@ def clean_data(df):
     for col in df:
         if df[col].nunique() == 1:
             df.drop(columns=col, inplace=True)
-            print('Removed column {} since it has only 1 distinct value'.format{col})
+            print('Removed column {} since it has only 1 distinct value'.format(col))
             
     return df
 
@@ -74,7 +74,7 @@ def save_data(df, database_filename):
 	"""
     tmp_str = 'sqlite:///{}'.format(database_filename)
     engine = create_engine(tmp_str)
-    df.to_sql(database_filename, engine, index=False)
+    df.to_sql(database_filename, engine, index=False, if_exists='replace')
 
 
 def main():
