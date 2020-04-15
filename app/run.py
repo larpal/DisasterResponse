@@ -29,7 +29,7 @@ def tokenize(text):
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table(engine.table_names()[0], engine)
-df.drop(columns='child_alone',inplace = True)
+#df.drop(columns='child_alone',inplace = True)
 # load model
 model = joblib.load("../models/classifier.pkl")
 
